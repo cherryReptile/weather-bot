@@ -171,6 +171,10 @@ func (w *WeatherResponse) GetHumidity() string {
 	return fmt.Sprintf("Humidity 💧: %v%s", w.Main.Humidity, "%")
 }
 
+func (w *WeatherResponse) GetVisibility() string {
+	return fmt.Sprintf("Visibility : %vm", w.Visibility)
+}
+
 func (w *WeatherResponse) GetPressureStat() string {
 	return fmt.Sprintf("Pressure 🗿: %v hPa", w.Main.Pressure)
 }
@@ -186,6 +190,7 @@ func (w *WeatherResponse) GetInfo() string {
 	wind := w.GetWindStat() + "\n\n"
 	cloud := w.GetCloudsStat() + "\n\n"
 	hum := w.GetHumidity() + "\n\n"
+	vis := w.GetVisibility() + "\n\n"
 	pres := w.GetPressureStat() + "\n\n"
 
 	if w.GetRainStat() != "" {
@@ -196,6 +201,6 @@ func (w *WeatherResponse) GetInfo() string {
 	}
 
 	cc := w.GetCountryAndCity()
-	res := fmt.Sprint(t, wstat, wind, cloud, hum, pres, rain, snow, cc)
+	res := fmt.Sprint(t, wstat, wind, cloud, hum, vis, pres, rain, snow, cc)
 	return res
 }
