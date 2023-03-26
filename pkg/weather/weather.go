@@ -172,7 +172,7 @@ func (w *WeatherResponse) GetHumidity() string {
 }
 
 func (w *WeatherResponse) GetVisibility() string {
-	return fmt.Sprintf("Visibility : %vm", w.Visibility)
+	return fmt.Sprintf("Visibility 👀: %vm", w.Visibility)
 }
 
 func (w *WeatherResponse) GetPressureStat() string {
