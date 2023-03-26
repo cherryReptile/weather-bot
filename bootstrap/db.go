@@ -3,6 +3,7 @@ package bootstrap
 import (
 	"fmt"
 	"github.com/jmoiron/sqlx"
+	_ "github.com/lib/pq"
 	"github.com/sirupsen/logrus"
 	"os"
 )

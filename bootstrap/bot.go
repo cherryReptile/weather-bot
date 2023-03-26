@@ -19,6 +19,5 @@ func NewBot() *telebot.Bot {
 		return nil
 	}
 
-	b.Start()
 	return b
 }
