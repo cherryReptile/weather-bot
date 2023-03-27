@@ -14,7 +14,7 @@ import (
 
 const (
 	ErrMessage        = "Error, sorry. Try again..."
-	AvailableCommands = "Available commands:\n\t\t/getweather: your current weather if location is set\n\t\t/location: your current coordinates"
+	AvailableCommands = "Available commands:\n\t\t/start: get commands list\n\t\t/getweather: your current weather if location is set\n\t\t/location: your current coordinates"
 	NotFoundInDbErr   = "user not found in db"
 	LocNotSet         = "Location didn't set. Please share it"
 )
@@ -115,7 +115,7 @@ func (h *Handler) GetWeather(c telebot.Context) error {
 	h.locationRepository.FindByChatID(loc, uint(c.Chat().ID))
 
 	if loc.ID == 0 {
-		logrus.Error(errors.New("user not found in db"))
+		logrus.Error(errors.New(NotFoundInDbErr))
 		return c.Send(ErrMessage)
 	}
 
