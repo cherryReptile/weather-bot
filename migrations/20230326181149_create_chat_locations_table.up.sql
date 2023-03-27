@@ -8,6 +8,6 @@ create table chat_locations
     country      varchar default '',
     city         varchar default '',
     chat_id      bigserial              not null unique,
-    created_at   time without time zone not null,
-    updated_at   time without time zone
+    created_at   timestamp without time zone not null,
+    updated_at   timestamp without time zone
 )
