@@ -11,6 +11,8 @@ type HistoryRepository interface {
 	Create(history *domain.History) error
 	Get(history *domain.History)
 	GetAllByChatID(chatID uint) []*domain.History
+	GetFirstRequest(history *domain.History, chatID uint)
+	GetLastRequest(history *domain.History, chatID uint)
 }
 
 type historyRepository struct {
@@ -46,4 +48,12 @@ func (c *historyRepository) GetAllByChatID(chatID uint) []*domain.History {
 	var res []*domain.History
 	c.db.Select(&res, "select * from history where chat_id=$1", chatID)
 	return res
+}
+
+func (c *historyRepository) GetFirstRequest(history *domain.History, chatID uint) {
+	c.db.Get(history, "select * from history where chat_id=$1 order by id limit 1", chatID)
+}
+
+func (c *historyRepository) GetLastRequest(history *domain.History, chatID uint) {
+	c.db.Get(history, "select * from history where chat_id=$1 order by id desc limit 1", chatID)
 }

@@ -2,6 +2,7 @@ package weather
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"os"
@@ -77,6 +78,9 @@ type Sys struct {
 }
 
 func (w *WeatherResponse) GetWeather(lat float64, lng float64) error {
+	if os.Getenv("OPENWEATHERMAP_API_KEY") == "" {
+		return errors.New("OPENWEATHERMAP_API_KEY didn't set")
+	}
 	// Create a new HTTP client
 	client := http.Client{}
 
@@ -140,11 +144,11 @@ func (w *WeatherResponse) GetSnowStat() string {
 	var l1 string
 	var l3 string
 	res := "Snow ❄️: "
-	if w.Rain.H != 0 {
-		l1 = fmt.Sprintf("last 1h: %v mm", w.Rain.H)
+	if w.Snow.H != 0 {
+		l1 = fmt.Sprintf("last 1h: %v mm", w.Snow.H)
 	}
-	if w.Rain.H != 0 {
-		l3 = fmt.Sprintf("last 3h: %v mm", w.Rain.H3)
+	if w.Snow.H != 0 {
+		l3 = fmt.Sprintf("last 3h: %v mm", w.Snow.H3)
 	}
 	if l1 != "" {
 		res += fmt.Sprintf("\n\t\t%s", l1)

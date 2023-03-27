@@ -2,13 +2,11 @@ package handlers
 
 import (
 	"database/sql"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/jmoiron/sqlx"
 	"github.com/sirupsen/logrus"
 	"gopkg.in/telebot.v3"
-	"sync"
 	"tgBotTask/domain"
 	"tgBotTask/pkg/weather"
 	"tgBotTask/repository"
@@ -16,7 +14,7 @@ import (
 
 const (
 	ErrMessage        = "Error, sorry. Try again..."
-	AvailableCommands = "Available commands:\n\t\t/getweather: your current weather\n\t\t/location: your current coordinates"
+	AvailableCommands = "Available commands:\n\t\t/getweather: your current weather if location is set\n\t\t/location: your current coordinates"
 	NotFoundInDbErr   = "user not found in db"
 	LocNotSet         = "Location didn't set. Please share it"
 )
@@ -146,34 +144,30 @@ func (h *Handler) GetWeather(c telebot.Context) error {
 }
 
 func (h *Handler) GetStats(c telebot.Context) error {
-	return c.Send("Your stats: ")
-}
+	var hh []*domain.History
+	first := new(domain.History)
+	last := new(domain.History)
 
-func (h *Handler) HistoryMiddleware() telebot.MiddlewareFunc {
-	return func(next telebot.HandlerFunc) telebot.HandlerFunc {
-		return func(c telebot.Context) error {
-			go func() {
-				history := new(domain.History)
-				mutex := sync.Mutex{}
-				mutex.Lock()
-				body, err := json.Marshal(c.Update())
-				mutex.Unlock()
-				if err != nil {
-					logrus.Error(err)
-					return
-				}
-				history.Request = body
-				mutex.Lock()
-				history.ChatID = uint(c.Chat().ID)
-				mutex.Unlock()
-				if err = h.historyRepository.Create(history); err != nil {
-					logrus.Error(err)
-					return
-				}
-
-				return
-			}()
-			return next(c)
-		}
+	h.historyRepository.GetFirstRequest(first, uint(c.Chat().ID))
+	if first.ID == 0 {
+		logrus.Error(errors.New("first request of chat not found in history table"))
+		return c.Send(ErrMessage)
 	}
+
+	h.historyRepository.GetLastRequest(last, uint(c.Chat().ID))
+	if last.ID == 0 {
+		logrus.Error(errors.New("last request of chat not found in history table"))
+		return c.Send(ErrMessage)
+	}
+
+	fr := fmt.Sprintf("\n\t\tFirst request: %v", first.CreatedAt.Format("15:04:05 2006.01.02"))
+	lr := fmt.Sprintf("\n\t\tLast request: %v", last.CreatedAt.Format("15:04:05 2006.01.02"))
+
+	hh = h.historyRepository.GetAllByChatID(uint(c.Chat().ID))
+	if len(hh) == 0 {
+		return c.Send(ErrMessage)
+	}
+
+	msg := fmt.Sprintf("Your stats 🔢:%s%s\n\t\tTotal requests: %v", lr, fr, len(hh))
+	return c.Send(msg)
 }
