@@ -10,7 +10,7 @@ import (
 type LocationRepository interface {
 	Create(loc *domain.Location) error
 	Update(loc *domain.Location, username string, chatID uint) error
-	Get(loc *domain.Location) error
+	Get(loc *domain.Location)
 	FindByChatID(loc *domain.Location, chatID uint)
 }
 
@@ -31,10 +31,7 @@ func (c *locationRepository) Create(loc *domain.Location) error {
 		return err
 	}
 
-	if err := c.Get(loc); err != nil {
-		return err
-	}
-
+	c.Get(loc)
 	if loc.ID == 0 {
 		return errors.New("record not found")
 	}
@@ -52,8 +49,8 @@ func (c *locationRepository) Update(loc *domain.Location, username string, chatI
 	return nil
 }
 
-func (c *locationRepository) Get(loc *domain.Location) error {
-	return c.db.Get(loc, "select * from chat_locations order by id desc limit 1")
+func (c *locationRepository) Get(loc *domain.Location) {
+	c.db.Get(loc, "select * from chat_locations order by id desc limit 1")
 }
 
 func (c *locationRepository) FindByChatID(loc *domain.Location, chatID uint) {

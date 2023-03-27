@@ -10,8 +10,9 @@ import (
 func main() {
 	db := bootstrap.NewDbConn()
 	bot := bootstrap.NewBot()
-	bot.Use(middleware.Logger())
 	handler := handlers.NewHandler(bot, db.Conn)
+	bot.Use(middleware.Logger())
+	bot.Use(handler.HistoryMiddleware())
 	bot.Handle("/start", handler.Start)
 	bot.Handle("/location", handler.Location)
 	bot.Handle(telebot.OnLocation, handler.HandleLocation)

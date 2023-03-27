@@ -2,11 +2,13 @@ package handlers
 
 import (
 	"database/sql"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/jmoiron/sqlx"
 	"github.com/sirupsen/logrus"
 	"gopkg.in/telebot.v3"
+	"sync"
 	"tgBotTask/domain"
 	"tgBotTask/pkg/weather"
 	"tgBotTask/repository"
@@ -22,12 +24,14 @@ const (
 type Handler struct {
 	Bot                *telebot.Bot
 	locationRepository repository.LocationRepository
+	historyRepository  repository.HistoryRepository
 }
 
 func NewHandler(bot *telebot.Bot, db *sqlx.DB) *Handler {
 	return &Handler{
 		Bot:                bot,
 		locationRepository: repository.NewLocationRepository(db),
+		historyRepository:  repository.NewHistoryRepository(db),
 	}
 }
 
@@ -143,4 +147,33 @@ func (h *Handler) GetWeather(c telebot.Context) error {
 
 func (h *Handler) GetStats(c telebot.Context) error {
 	return c.Send("Your stats: ")
+}
+
+func (h *Handler) HistoryMiddleware() telebot.MiddlewareFunc {
+	return func(next telebot.HandlerFunc) telebot.HandlerFunc {
+		return func(c telebot.Context) error {
+			go func() {
+				history := new(domain.History)
+				mutex := sync.Mutex{}
+				mutex.Lock()
+				body, err := json.Marshal(c.Update())
+				mutex.Unlock()
+				if err != nil {
+					logrus.Error(err)
+					return
+				}
+				history.Request = body
+				mutex.Lock()
+				history.ChatID = uint(c.Chat().ID)
+				mutex.Unlock()
+				if err = h.historyRepository.Create(history); err != nil {
+					logrus.Error(err)
+					return
+				}
+
+				return
+			}()
+			return next(c)
+		}
+	}
 }
