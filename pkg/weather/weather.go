@@ -164,7 +164,7 @@ func (w *WeatherResponse) GetSnowStat() string {
 }
 
 func (w *WeatherResponse) GetWindStat() string {
-	return fmt.Sprintf("Wind 🌬:\n\t\tSpeed: %.2f\n\t\tDirection,Degrees: %v", w.Wind.Speed, w.Wind.Deg)
+	return fmt.Sprintf("Wind 🌬:\n\t\tSpeed: %.2f m/s\n\t\tDirection,Degrees: %v°", w.Wind.Speed, w.Wind.Deg)
 }
 
 func (w *WeatherResponse) GetCloudsStat() string {
@@ -176,7 +176,7 @@ func (w *WeatherResponse) GetHumidity() string {
 }
 
 func (w *WeatherResponse) GetVisibility() string {
-	return fmt.Sprintf("Visibility 👀: %vm", w.Visibility)
+	return fmt.Sprintf("Visibility 👀: %v m", w.Visibility)
 }
 
 func (w *WeatherResponse) GetPressureStat() string {
