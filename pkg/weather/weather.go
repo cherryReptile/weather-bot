@@ -8,7 +8,7 @@ import (
 	"os"
 )
 
-type WeatherResponse struct {
+type Info struct {
 	Coord      Coord     `json:"coord"`
 	Weather    []Weather `json:"weather"`
 	Base       string    `json:"base"`
@@ -77,7 +77,7 @@ type Sys struct {
 	Sunset  int    `json:"sunset"`
 }
 
-func (w *WeatherResponse) GetWeather(lat float64, lng float64) error {
+func (w *Info) GetWeather(lat float64, lng float64) error {
 	if os.Getenv("OPENWEATHERMAP_API_KEY") == "" {
 		return errors.New("OPENWEATHERMAP_API_KEY didn't set")
 	}
@@ -102,11 +102,11 @@ func (w *WeatherResponse) GetWeather(lat float64, lng float64) error {
 	return nil
 }
 
-func (w *WeatherResponse) GetTemperature() string {
+func (w *Info) GetTemperature() string {
 	return fmt.Sprintf("Temperature 🌡:\n\t\tIn Celcius: %.2f°C\n\t\tIn Fahrenheit: %.2f°F\n\t\tIn Kelvin: %.2fK", w.Main.Temp-273.15, (w.Main.Temp-273.15)*9/5+32, w.Main.Temp)
 }
 
-func (w *WeatherResponse) GetWeatherStat() string {
+func (w *Info) GetWeatherStat() string {
 	weather := "Weather 🌤:"
 	s := "\t\tState: "
 	d := "\t\tDescription: "
@@ -117,7 +117,7 @@ func (w *WeatherResponse) GetWeatherStat() string {
 	return fmt.Sprintf("%s\n%s\n%s", weather, s, d)
 }
 
-func (w *WeatherResponse) GetRainStat() string {
+func (w *Info) GetRainStat() string {
 	var l1 string
 	var l3 string
 	res := "Rain 🌧:"
@@ -140,7 +140,7 @@ func (w *WeatherResponse) GetRainStat() string {
 	return res
 }
 
-func (w *WeatherResponse) GetSnowStat() string {
+func (w *Info) GetSnowStat() string {
 	var l1 string
 	var l3 string
 	res := "Snow ❄️: "
@@ -163,30 +163,30 @@ func (w *WeatherResponse) GetSnowStat() string {
 	return res
 }
 
-func (w *WeatherResponse) GetWindStat() string {
-	return fmt.Sprintf("Wind 🌬:\n\t\tSpeed: %.2f m/s\n\t\tDirection,Degrees: %v°", w.Wind.Speed, w.Wind.Deg)
+func (w *Info) GetWindStat() string {
+	return fmt.Sprintf("Wind 🌬:\n\t\tSpeed: %.2f m/s | %.2f km/h\n\t\tDirection,Degrees: %v°", w.Wind.Speed, w.Wind.Speed*3.6, w.Wind.Deg)
 }
 
-func (w *WeatherResponse) GetCloudsStat() string {
+func (w *Info) GetCloudsStat() string {
 	return fmt.Sprintf("Clouds ☁️: %v%s", w.Clouds.All, "%")
 }
 
-func (w *WeatherResponse) GetHumidity() string {
+func (w *Info) GetHumidity() string {
 	return fmt.Sprintf("Humidity 💧: %v%s", w.Main.Humidity, "%")
 }
 
-func (w *WeatherResponse) GetVisibility() string {
+func (w *Info) GetVisibility() string {
 	return fmt.Sprintf("Visibility 👀: %v m", w.Visibility)
 }
 
-func (w *WeatherResponse) GetPressureStat() string {
+func (w *Info) GetPressureStat() string {
 	return fmt.Sprintf("Pressure 🗿: %v hPa", w.Main.Pressure)
 }
-func (w *WeatherResponse) GetCountryAndCity() string {
+func (w *Info) GetCountryAndCity() string {
 	return fmt.Sprintf("Country, city: %s, %s", w.Sys.Country, w.Name)
 }
 
-func (w *WeatherResponse) GetInfo() string {
+func (w *Info) GetInfo() string {
 	var rain string
 	var snow string
 	t := w.GetTemperature() + "\n\n"

@@ -123,7 +123,7 @@ func (h *Handler) GetWeather(c telebot.Context) error {
 		return c.Send(LocNotSet)
 	}
 
-	w := new(weather.WeatherResponse)
+	w := new(weather.Info)
 	err := w.GetWeather(loc.Lat.Float64, loc.Lng.Float64)
 
 	if err != nil {
