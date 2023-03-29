@@ -4,7 +4,6 @@ import (
 	"errors"
 	"github.com/jmoiron/sqlx"
 	"tgBotTask/domain"
-	"tgBotTask/storage"
 	"time"
 )
 
@@ -12,7 +11,7 @@ type historyRepository struct {
 	db *sqlx.DB
 }
 
-func NewHistoryRepository(db *sqlx.DB) storage.HistoryRepository {
+func NewHistoryRepository(db *sqlx.DB) *historyRepository {
 	return &historyRepository{
 		db: db,
 	}

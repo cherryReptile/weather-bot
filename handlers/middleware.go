@@ -7,12 +7,11 @@ import (
 	"gopkg.in/telebot.v3"
 	"sync"
 	"tgBotTask/domain"
-	"tgBotTask/storage"
 	"tgBotTask/storage/repository"
 )
 
 type MiddlewareHandler struct {
-	historyCreator storage.HistoryRepository
+	historyCreator HistoryCreator
 	mu             sync.Mutex
 }
 
@@ -21,6 +20,10 @@ func NewMiddlewareHandler(db *sqlx.DB) *MiddlewareHandler {
 		historyCreator: repository.NewHistoryRepository(db),
 		mu:             sync.Mutex{},
 	}
+}
+
+type HistoryCreator interface {
+	Create(loc *domain.History) error
 }
 
 func (m *MiddlewareHandler) HistoryMiddleware() telebot.MiddlewareFunc {

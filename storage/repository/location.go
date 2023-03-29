@@ -4,7 +4,6 @@ import (
 	"errors"
 	"github.com/jmoiron/sqlx"
 	"tgBotTask/domain"
-	"tgBotTask/storage"
 	"time"
 )
 
@@ -12,7 +11,7 @@ type locationRepository struct {
 	db *sqlx.DB
 }
 
-func NewLocationRepository(db *sqlx.DB) storage.LocationRepository {
+func NewLocationRepository(db *sqlx.DB) *locationRepository {
 	return &locationRepository{
 		db: db,
 	}

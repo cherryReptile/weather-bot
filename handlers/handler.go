@@ -9,7 +9,6 @@ import (
 	"gopkg.in/telebot.v3"
 	"tgBotTask/domain"
 	"tgBotTask/pkg/weather"
-	"tgBotTask/storage"
 	"tgBotTask/storage/repository"
 )
 
@@ -22,8 +21,8 @@ const (
 
 type Handler struct {
 	Bot                *telebot.Bot
-	locationRepository storage.LocationRepository
-	historyRepository  storage.HistoryRepository
+	locationRepository LocationRepository
+	historyRepository  HistoryProvider
 }
 
 func NewHandler(bot *telebot.Bot, db *sqlx.DB) *Handler {
@@ -32,6 +31,18 @@ func NewHandler(bot *telebot.Bot, db *sqlx.DB) *Handler {
 		locationRepository: repository.NewLocationRepository(db),
 		historyRepository:  repository.NewHistoryRepository(db),
 	}
+}
+
+type HistoryProvider interface {
+	GetAllByChatID(chatID uint) []*domain.History
+	GetFirstRequest(history *domain.History, chatID uint)
+	GetLastRequest(history *domain.History, chatID uint)
+}
+
+type LocationRepository interface {
+	Create(loc *domain.Location) error
+	Update(loc *domain.Location, username string, chatID uint) error
+	FindByChatID(loc *domain.Location, chatID uint)
 }
 
 func (h *Handler) Start(c telebot.Context) error {
