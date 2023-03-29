@@ -4,21 +4,15 @@ import (
 	"errors"
 	"github.com/jmoiron/sqlx"
 	"tgBotTask/domain"
+	"tgBotTask/storage"
 	"time"
 )
-
-type LocationRepository interface {
-	Create(loc *domain.Location) error
-	Update(loc *domain.Location, username string, chatID uint) error
-	Get(loc *domain.Location)
-	FindByChatID(loc *domain.Location, chatID uint)
-}
 
 type locationRepository struct {
 	db *sqlx.DB
 }
 
-func NewLocationRepository(db *sqlx.DB) LocationRepository {
+func NewLocationRepository(db *sqlx.DB) storage.LocationRepository {
 	return &locationRepository{
 		db: db,
 	}

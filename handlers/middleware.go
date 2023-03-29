@@ -7,18 +7,19 @@ import (
 	"gopkg.in/telebot.v3"
 	"sync"
 	"tgBotTask/domain"
-	"tgBotTask/repository"
+	"tgBotTask/storage"
+	"tgBotTask/storage/repository"
 )
 
 type MiddlewareHandler struct {
-	historyRepository repository.HistoryRepository
-	mu                sync.Mutex
+	historyCreator storage.HistoryRepository
+	mu             sync.Mutex
 }
 
 func NewMiddlewareHandler(db *sqlx.DB) *MiddlewareHandler {
 	return &MiddlewareHandler{
-		historyRepository: repository.NewHistoryRepository(db),
-		mu:                sync.Mutex{},
+		historyCreator: repository.NewHistoryRepository(db),
+		mu:             sync.Mutex{},
 	}
 }
 
@@ -38,7 +39,7 @@ func (m *MiddlewareHandler) HistoryMiddleware() telebot.MiddlewareFunc {
 				m.mu.Lock()
 				history.ChatID = uint(c.Chat().ID)
 				m.mu.Unlock()
-				if err = m.historyRepository.Create(history); err != nil {
+				if err = m.historyCreator.Create(history); err != nil {
 					logrus.Error(err)
 					return
 				}

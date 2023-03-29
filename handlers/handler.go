@@ -9,7 +9,8 @@ import (
 	"gopkg.in/telebot.v3"
 	"tgBotTask/domain"
 	"tgBotTask/pkg/weather"
-	"tgBotTask/repository"
+	"tgBotTask/storage"
+	"tgBotTask/storage/repository"
 )
 
 const (
@@ -21,8 +22,8 @@ const (
 
 type Handler struct {
 	Bot                *telebot.Bot
-	locationRepository repository.LocationRepository
-	historyRepository  repository.HistoryRepository
+	locationRepository storage.LocationRepository
+	historyRepository  storage.HistoryRepository
 }
 
 func NewHandler(bot *telebot.Bot, db *sqlx.DB) *Handler {

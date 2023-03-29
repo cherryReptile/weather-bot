@@ -4,22 +4,15 @@ import (
 	"errors"
 	"github.com/jmoiron/sqlx"
 	"tgBotTask/domain"
+	"tgBotTask/storage"
 	"time"
 )
-
-type HistoryRepository interface {
-	Create(history *domain.History) error
-	Get(history *domain.History)
-	GetAllByChatID(chatID uint) []*domain.History
-	GetFirstRequest(history *domain.History, chatID uint)
-	GetLastRequest(history *domain.History, chatID uint)
-}
 
 type historyRepository struct {
 	db *sqlx.DB
 }
 
-func NewHistoryRepository(db *sqlx.DB) HistoryRepository {
+func NewHistoryRepository(db *sqlx.DB) storage.HistoryRepository {
 	return &historyRepository{
 		db: db,
 	}
