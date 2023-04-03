@@ -6,8 +6,8 @@ import (
 	"github.com/sirupsen/logrus"
 	"gopkg.in/telebot.v3"
 	"sync"
-	"tgBotTask/domain"
-	"tgBotTask/storage/repository"
+	"weatherBot/domain"
+	"weatherBot/storage/repository"
 )
 
 type MiddlewareHandler struct {

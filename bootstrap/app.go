@@ -4,12 +4,14 @@ import (
 	"github.com/sirupsen/logrus"
 	"gopkg.in/telebot.v3"
 	"gopkg.in/telebot.v3/middleware"
-	"tgBotTask/handlers"
+	"weatherBot/handlers"
 )
 
 func Start() {
 	db := NewDbConn()
 	bot := NewBot()
+	NewServer(bot)
+
 	m := handlers.NewMiddlewareHandler(db.Conn)
 	handler := handlers.NewHandler(bot, db.Conn)
 

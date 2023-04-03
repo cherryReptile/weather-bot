@@ -1,7 +1,7 @@
 package main
 
 import (
-	"tgBotTask/bootstrap"
+	"weatherBot/bootstrap"
 )
 
 func main() {

@@ -1,4 +1,4 @@
-module tgBotTask
+module weatherBot
 
 go 1.20
 

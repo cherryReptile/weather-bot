@@ -7,9 +7,9 @@ import (
 	"github.com/jmoiron/sqlx"
 	"github.com/sirupsen/logrus"
 	"gopkg.in/telebot.v3"
-	"tgBotTask/domain"
-	"tgBotTask/pkg/weather"
-	"tgBotTask/storage/repository"
+	"weatherBot/domain"
+	"weatherBot/pkg/weather"
+	"weatherBot/storage/repository"
 )
 
 const (

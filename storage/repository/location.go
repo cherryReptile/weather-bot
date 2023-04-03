@@ -3,8 +3,8 @@ package repository
 import (
 	"errors"
 	"github.com/jmoiron/sqlx"
-	"tgBotTask/domain"
 	"time"
+	"weatherBot/domain"
 )
 
 type locationRepository struct {
