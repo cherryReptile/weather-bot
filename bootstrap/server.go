@@ -6,6 +6,7 @@ import (
 	"gopkg.in/telebot.v3"
 	"net/http"
 	"os"
+	"sync"
 )
 
 func NewServer(bot *telebot.Bot) {
@@ -17,6 +18,12 @@ func NewServer(bot *telebot.Bot) {
 			return
 		}
 
+		mu := sync.Mutex{}
+		mu.Lock()
+		defer logrus.Info("unlock bot update")
+		defer mu.Unlock()
+
+		logrus.Info("lock bot update")
 		bot.ProcessUpdate(*update)
 
 		w.WriteHeader(http.StatusOK)
