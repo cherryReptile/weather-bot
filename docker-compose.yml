@@ -2,32 +2,29 @@ version: '3'
 
 services:
   app:
-    build:
-      context: .
-      dockerfile: docker/Dockerfile
-    user: 1000:1000
+    image: ghcr.io/cherryreptile/weather-bot:latest
+    restart: unless-stopped
     environment:
-      - GOCACHE=/usr/src/app/tmp/cache
-    env_file:
-      - .env
+      TG_BOT_TOKEN: ""
+      WEBHOOK_URL: ""
+      OPENWEATHERMAP_API_KEY: ""
+      PORT: "8888"
+      DB_NAME: "db"
+      DB_USER: "db "
+      DB_PASSWORD: "db"
+      DB_HOST: "db"
+      DB_PORT: "5432"
     ports:
-      - "9000:9000"
-      - "2345:2345"
-    volumes:
-      - ./:/usr/src/app
-      - /etc/passwd:/etc/passwd
-      - /etc/shadow:/etc/shadow
-      - ~/go/pkg:/go/pkg # для синхронизиации пакетов с IDE
-    command: ["air"]
+      - "8888:8888"
   db:
     image: postgres:alpine
     restart: unless-stopped
-    command: ["postgres", "-c", "log_statement=all", "-c", "log_destination=stderr"]
+    command: [ "postgres", "-c", "log_statement=all", "-c", "log_destination=stderr" ]
     environment:
-      POSTGRES_DB: ${DB_NAME}
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: "db"
+      POSTGRES_USER: "db"
+      POSTGRES_PASSWORD: "db"
     volumes:
       - ./docker/pg/data:/var/lib/postgresql/data
-    ports:
-      - ${DB_PORT:-5432}:5432
+    expose:
+      - "5432"
